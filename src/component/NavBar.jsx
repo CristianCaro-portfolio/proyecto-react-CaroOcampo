@@ -1,15 +1,20 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import CartWidget from './CartWidget';
-import './NavBar.css'; // Importa el archivo de estilos personalizados
 
 function NavBar() {
   return (
     <nav className="navbar">
-      <h3 className="navbar-brand">MI E-COMMERCE</h3>
+      <Link to="/" className="navbar-brand">
+        MI E-COMMERCE
+      </Link>
       <div className="navbar-items">
-        <button className="btn btn-primary">Hombre</button>
-        <button className="btn btn-primary">Mujer</button>
-        <button className="btn btn-primary">Unisex</button>
+        <Link to="/category/Alien" className="btn btn-primary">
+          Alien
+        </Link>
+        <Link to="/category/Human" className="btn btn-primary">
+          Human
+        </Link>
       </div>
       <CartWidget />
     </nav>
