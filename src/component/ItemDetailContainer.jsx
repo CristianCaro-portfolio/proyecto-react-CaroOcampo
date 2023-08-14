@@ -4,24 +4,23 @@ import { useParams } from 'react-router-dom';
 function ItemDetailContainer({ characters }) {
   const { id } = useParams();
 
-  // Filtrar los personajes según la especie seleccionada (si existe)
+  // filter characters by specie selected if exist.
   const filteredCharacters = characters.filter(
     (character) => character.species.toLowerCase() === id.toLowerCase()
   );
 
   return (
     <div>
-      {/* Mostrar un mensaje si no hay personajes para la especie seleccionada */}
+      {/* show a message if there is not character for the specie selected */}
       {filteredCharacters.length === 0 ? (
-        <p>No hay personajes disponibles para esta especie.</p>
+        <p>there are not character available for this specie.</p>
       ) : (
-        // Mostrar los personajes filtrados según la especie
+        // show character filtered by specie
         filteredCharacters.map((character) => (
           <div key={character.id}>
             <img src={character.image} alt={character.name} />
             <h3>{character.name}</h3>
             <p>Species: {character.species}</p>
-            {/* Agrega más información de los personajes si lo deseas */}
           </div>
         ))
       )}

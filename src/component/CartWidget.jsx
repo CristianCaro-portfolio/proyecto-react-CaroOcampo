@@ -6,12 +6,12 @@ import './CartWidget.css'; // Importa el archivo de estilos personalizados
 
 // Agrega el icono del carrito a la biblioteca de iconos
 library.add(faShoppingCart);
-
-function CartWidget() {
+// receive counter a pro
+function CartWidget({ cartItemCount }) {
   return (
     <div>
       <FontAwesomeIcon icon="shopping-cart" />
-      <span className="badge">1</span>
+      <span className="badge">{cartItemCount}</span> {/* show quantity in the car */}
     </div>
   );
 }

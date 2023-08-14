@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import CartWidget from './CartWidget';
+import './NavBar.css';
 
 function NavBar() {
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-brand">
-        MI E-COMMERCE
+        HEY RICK! E-COMMERCE
       </Link>
       <div className="navbar-items">
         <Link to="/category/Alien" className="btn btn-primary">
