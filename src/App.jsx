@@ -23,7 +23,7 @@ initializeApp(firebaseConfig);
 
 function App() {
   const [characters, setCharacters] = useState([]);
-  const [cartItemCount, setCartItemCount] = useState(0); // new state for count ítems in carwidget
+  const [cartItems, setCartItems] = useState([]); // Estado para los elementos en el carrito
 
   useEffect(() => {
     // Función para obtener datos desde Firestore
@@ -45,16 +45,33 @@ function App() {
     fetchCharactersFromFirestore();
   }, []);
 
+  // Función para agregar un elemento al carrito
+  const addToCart = (item) => {
+    // Verificar si el elemento ya está en el carrito
+    const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
+
+    if (existingItem) {
+      // Si ya existe, incrementar la cantidad
+      const updatedCartItems = cartItems.map((cartItem) =>
+        cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem
+      );
+      setCartItems(updatedCartItems);
+    } else {
+      // Si no existe, agregar como nuevo elemento al carrito
+      setCartItems([...cartItems, { ...item, quantity: 1 }]);
+    }
+  };
+
   return (
     <Router>
       <div>
-        <NavBar cartItemCount={cartItemCount} /> 
+        <NavBar cartItemCount={cartItems.length} /> 
         <Routes>
           {/* Pass the 'characters' data as a prop to the components */}
-          <Route path="/" element={<ItemListContainer characters={characters} />} />
-          <Route path="/category/:id" element={<ItemListContainer characters={characters} />} />
-          <Route path="/item/:id" element={<ItemDetailContainer characters={characters} />} />
-          <Route path="/checkout" element={<Checkout cartItems={[]} total={0}/>}/> {/*take the items from the carwidget and the total as prop*/}
+          <Route path="/" element={<ItemListContainer characters={characters} addToCart={addToCart} />} />
+          <Route path="/category/:id" element={<ItemListContainer characters={characters} addToCart={addToCart} />} />
+          <Route path="/item/:id" element={<ItemDetailContainer characters={characters} addToCart={addToCart} />} />
+          <Route path="/checkout" element={<Checkout cartItems={cartItems} />}/> {/* Take the items from the cart and the total as prop */}
         </Routes>
       </div>
     </Router>

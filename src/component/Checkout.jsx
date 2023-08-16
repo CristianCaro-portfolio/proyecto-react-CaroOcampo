@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore'; // Import functions Firestore
 
@@ -7,34 +6,34 @@ function Checkout({ cartItems, total }) {
 
   const handlePurchase = async () => {
     try {
-      // create a new orderin  Firestore
+      // Crear una nueva orden en Firestore
       const db = getFirestore();
       const ordersCollection = collection(db, 'orders');
 
-      // data from new order
+      // Datos de la nueva orden
       const newOrder = {
         items: cartItems.map((item) => ({
           id: item.id,
           quantity: item.quantity,
         })),
         total: total,
+        timestamp: serverTimestamp(),
+        customerName: name,
       };
 
       // Agregar la nueva orden a la colección "orders"
       const docRef = await addDoc(ordersCollection, newOrder);
 
-      console.log('Order saved in Firestore with ID:', docRef.id);
+      console.log('Orden guardada en Firestore con ID:', docRef.id);
     } catch (error) {
-      console.error('Error saving order in Firestore:', error);
+      console.error('Error al guardar la orden en Firestore:', error);
     }
   };
-
-  // Logic for make the purchase and save the order in the data base
 
   return (
     <div>
       <h2>Checkout</h2>
-      {/* show items in the cartwidget */}
+      {/* Mostrar elementos en el carrito */}
       <ul>
         {cartItems.map((item) => (
           <li key={item.id}>
@@ -42,12 +41,17 @@ function Checkout({ cartItems, total }) {
           </li>
         ))}
       </ul>
-      {/* show total order */}
+      {/* Mostrar el total */}
       <p>Total: ${total}</p>
-      {/* form to ingest information from client */}
+      {/* Formulario para ingresar información del cliente */}
       <form>
-        <input type="text" placeholder="Nombre" value={name} onChange={(e) => setName(e.target.value)} />
-        <button onClick={handlePurchase}>Make purchase</button>
+        <input
+          type="text"
+          placeholder="Nombre"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <button onClick={handlePurchase}>Realizar compra</button>
       </form>
     </div>
   );

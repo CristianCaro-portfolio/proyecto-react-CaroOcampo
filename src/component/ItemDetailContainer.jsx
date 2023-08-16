@@ -11,16 +11,17 @@ function ItemDetailContainer({ characters }) {
 
   return (
     <div>
-      {/* show a message if there is not character for the specie selected */}
       {filteredCharacters.length === 0 ? (
         <p>there are not character available for this specie.</p>
       ) : (
-        // show character filtered by specie
+        // Mostrar detalles del personaje filtrado
         filteredCharacters.map((character) => (
           <div key={character.id}>
             <img src={character.image} alt={character.name} />
             <h3>{character.name}</h3>
             <p>Species: {character.species}</p>
+            {/* Botón para agregar al carrito */}
+            <button onClick={() => addToCart(character)}>Add to Cart</button>
           </div>
         ))
       )}
