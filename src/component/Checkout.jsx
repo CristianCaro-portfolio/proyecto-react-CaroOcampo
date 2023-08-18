@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore'; // Import functions Firestore
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
-function Checkout({ cartItems, total }) {
+function Checkout({ cartItems }) {
   const [name, setName] = useState('');
+
+  // Calcula el precio total
+  const total = cartItems.reduce((accumulator, currentItem) => {
+    return accumulator + currentItem.price * currentItem.quantity;
+  }, 0);
 
   const handlePurchase = async () => {
     try {
@@ -10,7 +15,6 @@ function Checkout({ cartItems, total }) {
       const db = getFirestore();
       const ordersCollection = collection(db, 'orders');
 
-      // Datos de la nueva orden
       const newOrder = {
         items: cartItems.map((item) => ({
           id: item.id,
@@ -22,9 +26,9 @@ function Checkout({ cartItems, total }) {
       };
 
       // Agregar la nueva orden a la colección "orders"
-      const docRef = await addDoc(ordersCollection, newOrder);
+      await addDoc(ordersCollection, newOrder);
 
-      console.log('Orden guardada en Firestore con ID:', docRef.id);
+      console.log('Orden guardada en Firestore');
     } catch (error) {
       console.error('Error al guardar la orden en Firestore:', error);
     }
@@ -33,7 +37,6 @@ function Checkout({ cartItems, total }) {
   return (
     <div>
       <h2>Checkout</h2>
-      {/* Mostrar elementos en el carrito */}
       <ul>
         {cartItems.map((item) => (
           <li key={item.id}>
@@ -41,9 +44,7 @@ function Checkout({ cartItems, total }) {
           </li>
         ))}
       </ul>
-      {/* Mostrar el total */}
-      <p>Total: ${total}</p>
-      {/* Formulario para ingresar información del cliente */}
+      <p>Total: ${total.toFixed(2)}</p>
       <form>
         <input
           type="text"
