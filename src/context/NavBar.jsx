@@ -16,8 +16,8 @@ function NavBar() {
         <Link to="/category/Human" className="btn btn-primary">
           Human
         </Link>
+        <CartWidget />
       </div>
-      <CartWidget />
     </nav>
   );
 }

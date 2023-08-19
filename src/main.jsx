@@ -1,11 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './main.css'
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import BrowserRouter and other utilities
+import App from './App';
+import './main.css';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+const rootElement = document.getElementById('root');
+
+const root = createRoot(rootElement);
+root.render(
+  <App />
+);

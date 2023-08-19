@@ -19,16 +19,24 @@ function ItemListContainer({ characters, addToCart }) {
   // Renderizar la lista de personajes filtrados o la imagen en la página principal
   return (
     <div className="item-list-container">
-      {/* Mostrar los personajes filtrados */}
-      {filteredCharacters.map((character) => (
-        <div key={character.id} className="character-card">
-          <img src={character['img-url']} alt={character.name} className="character-image" />
-          <h3>{character.name}</h3>
-          <p>Price: {character.price}</p>
-          {/* Botón para agregar al carrito */}
-          <button onClick={() => addToCart(character)}>Add to Cart</button>
-        </div>
-      ))}
+      {filteredCharacters.length === 0 ? (
+        <img
+          src="https://firebasestorage.googleapis.com/v0/b/e-commerce-finalproject-7c55f.appspot.com/o/main_banner.jpg?alt=media&token=ad7b2045-5287-4120-9d55-497b5e0f31f2"
+          alt="Main Banner"
+          className="main-banner"
+        />
+      ) : (
+        // Mostrar los personajes filtrados
+        filteredCharacters.map((character) => (
+          <div key={character.id} className="character-card">
+            <img src={character['img-url']} alt={character.name} className="character-image" />
+            <h3>{character.name}</h3>
+            <p>Price: {character.price}</p>
+            {/* Botón para agregar al carrito */}
+            <button onClick={() => addToCart(character)}>Add to Cart</button>
+          </div>
+        ))
+      )}
     </div>
   );
 }

@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useCartContext } from './CartContext';
 
-function Checkout({ cartItems }) {
+function Checkout() {
+  const { cartItems, calculateTotal, orderInfo, setOrderInfo, createOrder } = useCartContext();
   const [name, setName] = useState('');
-
+  console.log(cartItems);
+  console.log(calculateTotal(cartItems));
+  
   // Calcula el precio total
   const total = cartItems.reduce((accumulator, currentItem) => {
     return accumulator + currentItem.price * currentItem.quantity;
@@ -44,7 +48,7 @@ function Checkout({ cartItems }) {
           </li>
         ))}
       </ul>
-      <p>Total: ${total.toFixed(2)}</p>
+      <p>Total: ${calculateTotal(cartItems).toFixed(2)}</p>
       <form>
         <input
           type="text"
@@ -52,7 +56,7 @@ function Checkout({ cartItems }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button onClick={handlePurchase}>Realizar compra</button>
+        <button type="button" onClick={createOrder}>Realizar compra</button>
       </form>
     </div>
   );

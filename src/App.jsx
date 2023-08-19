@@ -1,27 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import NavBar from './component/NavBar';
-import ItemListContainer from './component/ItemListContainer';
-import ItemDetailContainer from './component/ItemDetailContainer';
-import Checkout from './component/Checkout';
-import CartWidget from './component/CartWidget';
+import NavBar from './context/NavBar';
+import ItemListContainer from './context/ItemListContainer';
+import ItemDetailContainer from './context/ItemDetailContainer';
+import Checkout from './context/Checkout';
+import CartWidget from './context/CartWidget';
 import { getFirestore, collection, getDocs } from 'firebase/firestore'; // Import functions from Firestore
 import { initializeApp } from 'firebase/app';
 import './app.css';
+import { CartProvider } from './context/CartContext'; // Importa el CartProvider
+import { useCartContext } from './context/CartContext';
+import config from './../config';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBcAyV-8yR6AyDI260jVT01l-MmdDWAdCA",
-  authDomain: "e-commerce-finalproject-7c55f.firebaseapp.com",
-  projectId: "e-commerce-finalproject-7c55f",
-  storageBucket: "e-commerce-finalproject-7c55f.appspot.com",
-  messagingSenderId: "43076129063",
-  appId: "1:43076129063:web:c2339850090164e85a1902",
-  measurementId: "G-Q37ELLYY73"
+  apiKey: config.apiKey,
+  authDomain: config.authDomain,
+  projectId: config.projectId,
+  storageBucket: config.storageBucket,
+  messagingSenderId: config.messagingSenderId,
+  appId: config.appId,
+  measurementId: config.measurementId
 };
 
 initializeApp(firebaseConfig);
 
 function App() {
+  const [total, setTotal] = useState(0);
   const [characters, setCharacters] = useState([]);
   const [cartItems, setCartItems] = useState([]); // Estado para los elementos en el carrito
 
@@ -30,7 +34,7 @@ function App() {
     async function fetchCharactersFromFirestore() {
       try {
         const db = getFirestore();
-        const charactersCollection = collection(db, 'products'); // Cambiar por el nombre de tu colección
+        const charactersCollection = collection(db, 'products');
         const charactersSnapshot = await getDocs(charactersCollection);
         const charactersData = charactersSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -46,33 +50,39 @@ function App() {
   }, []);
 
   // Función para agregar un elemento al carrito
-  const addToCart = (item) => {
-    // Verificar si el elemento ya está en el carrito
-    const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
-
+  const addToCart = (itemToAdd) => {
+    // El estado del CartContext ya está inicializado
+    const { cartItems } = useCartContext();
+  
+    // Check if the item is already in the cart
+    const existingItem = cartItems.find((item) => item.id === itemToAdd.id);
+  
     if (existingItem) {
-      // Si ya existe, incrementar la cantidad
-      const updatedCartItems = cartItems.map((cartItem) =>
-        cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem
+      // If the item already exists, update its quantity
+      cartItems = cartItems.map((item) =>
+        item.id === itemToAdd.id ? ({ ...item, quantity: item.quantity + 1 }) : item
       );
-      setCartItems(updatedCartItems);
     } else {
-      // Si no existe, agregar como nuevo elemento al carrito
-      setCartItems([...cartItems, { ...item, quantity: 1 }]);
+      // If the item doesn't exist, add it to the cart
+      cartItems = [...cartItems, ({ ...itemToAdd, quantity: 1 })];
     }
   };
 
+
   return (
+    
     <Router>
-      <div>
-        <NavBar cartItemCount={cartItems.length} /> 
-        <Routes>
-          {/* Pass the 'characters' data as a prop to the components */}
-          <Route path="/" element={<ItemListContainer characters={characters} addToCart={addToCart} />} />
-          <Route path="/category/:id" element={<ItemListContainer characters={characters} addToCart={addToCart} />} />
-          <Route path="/item/:id" element={<ItemDetailContainer characters={characters} addToCart={addToCart} />} />
-          <Route path="/checkout" element={<Checkout cartItems={cartItems} />}/> {/* Take the items from the cart and the total as prop */}
-        </Routes>
+      <div>  
+        <CartProvider>
+          <NavBar cartItemCount={cartItems.length} /> 
+          <Routes>
+            {/* Pass the 'characters' data as a prop to the components */}
+            <Route path="/" element={<ItemListContainer characters={characters} addToCart={addToCart} />} />
+            <Route path="/category/:id" element={<ItemListContainer characters={characters} addToCart={addToCart} />} />
+            <Route path="/item/:id" element={<ItemDetailContainer characters={characters} addToCart={addToCart} />} />
+            <Route path="/checkout" element={<Checkout total={total}/>}/> {/* Take the items from the cart and the total as prop */}
+          </Routes>
+        </CartProvider>  
       </div>
     </Router>
   );
