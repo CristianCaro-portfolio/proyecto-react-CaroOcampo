@@ -1,5 +1,19 @@
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import React, { createContext, useContext, useState } from 'react';
+import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from 'firebase/firestore';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import config from './../../config';
+import { initializeApp } from 'firebase/app';
+
+const firebaseConfig = {
+  apiKey: config.apiKey,
+  authDomain: config.authDomain,
+  projectId: config.projectId,
+  storageBucket: config.storageBucket,
+  messagingSenderId: config.messagingSenderId,
+  appId: config.appId,
+  measurementId: config.measurementId
+};
+
+initializeApp(firebaseConfig);
 
 const CartContext = createContext();
 
@@ -8,6 +22,25 @@ export const useCartContext = () => useContext(CartContext);
 export function CartProvider ({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [orderInfo, setOrderInfo] = useState({});
+  const ordersDb = getFirestore(); // Usamos la instancia de Firebase para "orders"
+  
+  useEffect(() => {
+    const initializeFirestore = async () => {
+      try {
+        const ordersCollectionRef = collection(ordersDb, 'orders');
+        const ordersSnapshot = await getDocs(ordersCollectionRef);
+
+        if (ordersSnapshot.empty) {
+          // La colección "orders" no existe, así que la creamos
+          await addDoc(ordersCollectionRef, { dummy: true });
+        }
+      } catch (error) {
+        console.error('Error al inicializar Firestore:', error);
+      }
+    };
+
+    initializeFirestore();
+  }, []);
 
   const addToCart = (itemToAdd) => {
     // Check if the item is already in the cart
@@ -38,8 +71,7 @@ export function CartProvider ({ children }) {
 
   const createOrder = async () => {
     try {
-      const db = getFirestore();
-      const ordersCollection = collection(db, 'orders');
+      const ordersCollection = collection(ordersDb, 'orders');
 
       const newOrder = {
         items: cartItems.map((character) => ({

@@ -3,36 +3,19 @@ import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/fire
 import { useCartContext } from './CartContext';
 
 function Checkout() {
-  const { cartItems, calculateTotal, orderInfo, setOrderInfo, createOrder } = useCartContext();
+  const { cartItems, calculateTotal, createOrder } = useCartContext();
   const [name, setName] = useState('');
-  console.log(cartItems);
-  console.log(calculateTotal(cartItems));
-  
-  // Calcula el precio total
-  const total = cartItems.reduce((accumulator, currentItem) => {
-    return accumulator + currentItem.price * currentItem.quantity;
-  }, 0);
+  const [isOrderPlaced, setIsOrderPlaced] = useState(false);
 
   const handlePurchase = async () => {
+    if (!name) {
+      alert('Por favor, ingresa tu nombre antes de realizar la compra.');
+      return;
+    }
+
     try {
-      // Crear una nueva orden en Firestore
-      const db = getFirestore();
-      const ordersCollection = collection(db, 'orders');
-
-      const newOrder = {
-        items: cartItems.map((character) => ({
-          id: character.id,
-          quantity: character.quantity,
-        })),
-        total: total,
-        timestamp: serverTimestamp(),
-        customerName: name,
-      };
-
-      // Agregar la nueva orden a la colección "orders"
-      await addDoc(ordersCollection, newOrder);
-
-      console.log('Orden guardada en Firestore');
+      await createOrder(name);
+      setIsOrderPlaced(true);
     } catch (error) {
       console.error('Error al guardar la orden en Firestore:', error);
     }
@@ -49,17 +32,22 @@ function Checkout() {
         ))}
       </ul>
       <p>Total: ${calculateTotal(cartItems).toFixed(2)}</p>
-      <form>
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <button type="button" onClick={createOrder}>Realizar compra</button>
-      </form>
+      {isOrderPlaced ? (
+        <p>¡Orden realizada exitosamente!</p>
+      ) : (
+        <form>
+          <input
+            type="text"
+            placeholder="Nombre"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <button type="button" onClick={handlePurchase}>Realizar compra</button>
+        </form>
+      )}
     </div>
   );
 }
 
 export default Checkout;
+ 
