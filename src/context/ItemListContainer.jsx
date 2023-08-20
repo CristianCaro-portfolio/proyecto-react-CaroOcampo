@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './itemlistcontainer.css';
+import { useCartContext } from './CartContext';
 
-function ItemListContainer({ characters, addToCart }) {
+function ItemListContainer({ characters }) {
   const { id } = useParams();
   const [filteredCharacters, setFilteredCharacters] = useState([]);
+  const { addToCart } = useCartContext();
 
   useEffect(() => {
     // Filtrar personajes según la especie seleccionada (si existe)

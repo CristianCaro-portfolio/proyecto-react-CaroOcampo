@@ -20,9 +20,9 @@ function Checkout() {
       const ordersCollection = collection(db, 'orders');
 
       const newOrder = {
-        items: cartItems.map((item) => ({
-          id: item.id,
-          quantity: item.quantity,
+        items: cartItems.map((character) => ({
+          id: character.id,
+          quantity: character.quantity,
         })),
         total: total,
         timestamp: serverTimestamp(),
@@ -42,9 +42,9 @@ function Checkout() {
     <div>
       <h2>Checkout</h2>
       <ul>
-        {cartItems.map((item) => (
-          <li key={item.id}>
-            {item.name} - Cantidad: {item.quantity}
+        {cartItems.map((character) => (
+          <li key={character.id}>
+            {character.name} - Cantidad: {character.quantity}
           </li>
         ))}
       </ul>

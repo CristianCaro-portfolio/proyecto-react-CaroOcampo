@@ -9,7 +9,6 @@ import { getFirestore, collection, getDocs } from 'firebase/firestore'; // Impor
 import { initializeApp } from 'firebase/app';
 import './app.css';
 import { CartProvider } from './context/CartContext'; // Importa el CartProvider
-import { useCartContext } from './context/CartContext';
 import config from './../config';
 
 const firebaseConfig = {
@@ -49,26 +48,6 @@ function App() {
     fetchCharactersFromFirestore();
   }, []);
 
-  // Función para agregar un elemento al carrito
-  const addToCart = (itemToAdd) => {
-    // El estado del CartContext ya está inicializado
-    const { cartItems } = useCartContext();
-  
-    // Check if the item is already in the cart
-    const existingItem = cartItems.find((item) => item.id === itemToAdd.id);
-  
-    if (existingItem) {
-      // If the item already exists, update its quantity
-      cartItems = cartItems.map((item) =>
-        item.id === itemToAdd.id ? ({ ...item, quantity: item.quantity + 1 }) : item
-      );
-    } else {
-      // If the item doesn't exist, add it to the cart
-      cartItems = [...cartItems, ({ ...itemToAdd, quantity: 1 })];
-    }
-  };
-
-
   return (
     
     <Router>
@@ -77,9 +56,9 @@ function App() {
           <NavBar cartItemCount={cartItems.length} /> 
           <Routes>
             {/* Pass the 'characters' data as a prop to the components */}
-            <Route path="/" element={<ItemListContainer characters={characters} addToCart={addToCart} />} />
-            <Route path="/category/:id" element={<ItemListContainer characters={characters} addToCart={addToCart} />} />
-            <Route path="/item/:id" element={<ItemDetailContainer characters={characters} addToCart={addToCart} />} />
+            <Route path="/" element={<ItemListContainer characters={characters} />} />
+            <Route path="/category/:id" element={<ItemListContainer characters={characters} />} />
+            <Route path="/character/:id" element={<ItemDetailContainer characters={characters} />} />
             <Route path="/checkout" element={<Checkout total={total}/>}/> {/* Take the items from the cart and the total as prop */}
           </Routes>
         </CartProvider>  

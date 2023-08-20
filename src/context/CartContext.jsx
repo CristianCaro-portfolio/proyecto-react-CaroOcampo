@@ -10,30 +10,30 @@ export function CartProvider ({ children }) {
   const [orderInfo, setOrderInfo] = useState({});
 
   const addToCart = (itemToAdd) => {
-    const { cartItems } = useCartContext();
-  
     // Check if the item is already in the cart
-    const existingItem = cartItems.find((item) => item.id === itemToAdd.id);
+    const existingItem = cartItems.find((character) => character.id === itemToAdd.id);
   
     if (existingItem) {
       // If the item already exists, update its quantity
-      cartItems = cartItems.map((item) =>
-        item.id === itemToAdd.id ? { ...item, quantity: item.quantity + 1 } : item
+      setCartItems((prevCartItems) =>
+        prevCartItems.map((character) =>
+          character.id === itemToAdd.id ? { ...character, quantity: character.quantity + 1 } : character
+        )
       );
     } else {
       // If the item doesn't exist, add it to the cart
-      cartItems = [...cartItems, { ...itemToAdd, quantity: 1 }];
+      setCartItems((prevCartItems) => [...prevCartItems, { ...itemToAdd, quantity: 1 }]);
     }
   };
 
   const removeFromCart = (itemIdToRemove) => {
     setCartItems((prevCartItems) =>
-      prevCartItems.filter((item) => item.id !== itemIdToRemove)
+      prevCartItems.filter((character) => character.id !== itemIdToRemove)
     );
   };
 
   const calculateTotal = (items) => {
-    return items.reduce((total, item) => total + item.price * item.quantity, 0);
+    return items.reduce((total, character) => total + character.price * character.quantity, 0);
   };
 
   const createOrder = async () => {
@@ -42,9 +42,9 @@ export function CartProvider ({ children }) {
       const ordersCollection = collection(db, 'orders');
 
       const newOrder = {
-        items: cartItems.map((item) => ({
-          id: item.id,
-          quantity: item.quantity,
+        items: cartItems.map((character) => ({
+          id: character.id,
+          quantity: character.quantity,
         })),
         total: calculateTotal(cartItems),
         timestamp: serverTimestamp(),
