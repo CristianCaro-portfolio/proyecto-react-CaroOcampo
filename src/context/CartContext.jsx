@@ -22,7 +22,7 @@ export const useCartContext = () => useContext(CartContext);
 export function CartProvider ({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [orderInfo, setOrderInfo] = useState({});
-  const ordersDb = getFirestore(); // Usamos la instancia de Firebase para "orders"
+  const ordersDb = getFirestore(); // use of Firebase for "orders"
   
   useEffect(() => {
     const initializeFirestore = async () => {
@@ -31,7 +31,7 @@ export function CartProvider ({ children }) {
         const ordersSnapshot = await getDocs(ordersCollectionRef);
 
         if (ordersSnapshot.empty) {
-          // La colección "orders" no existe, así que la creamos
+          // if the collection "orders" does not exist, we create one
           await addDoc(ordersCollectionRef, { dummy: true });
         }
       } catch (error) {

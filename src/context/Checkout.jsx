@@ -3,7 +3,7 @@ import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/fire
 import { useCartContext } from './CartContext';
 
 function Checkout() {
-  const { cartItems, calculateTotal, createOrder } = useCartContext();
+  const { cartItems, calculateTotal, createOrder, orderInfo } = useCartContext();
   const [name, setName] = useState('');
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
 
@@ -13,8 +13,11 @@ function Checkout() {
       return;
     }
 
+    // save the name in the variable orderInfo
+    orderInfo.name = name;
+
     try {
-      await createOrder(name);
+      await createOrder(orderInfo.name);
       setIsOrderPlaced(true);
     } catch (error) {
       console.error('Error al guardar la orden en Firestore:', error);

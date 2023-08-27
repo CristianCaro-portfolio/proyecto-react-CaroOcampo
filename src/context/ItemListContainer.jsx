@@ -9,7 +9,7 @@ function ItemListContainer({ characters }) {
   const { addToCart } = useCartContext();
 
   useEffect(() => {
-    // Filtrar personajes según la especie seleccionada (si existe)
+    // filter characters by especie (if exist)
     if (id && characters) {
       const filteredCharactersByCategory = characters.filter(
         (character) => character.category && character.category.toLowerCase() === id.toLowerCase()
@@ -18,7 +18,7 @@ function ItemListContainer({ characters }) {
     }
   }, [id, characters]);
 
-  // Renderizar la lista de personajes filtrados o la imagen en la página principal
+  // Rendering characters list  filtered or image in the main page
   return (
     <div className="item-list-container">
       {filteredCharacters.length === 0 ? (
@@ -28,13 +28,13 @@ function ItemListContainer({ characters }) {
           className="main-banner"
         />
       ) : (
-        // Mostrar los personajes filtrados
+        // show characters filteres
         filteredCharacters.map((character) => (
           <div key={character.id} className="character-card">
             <img src={character['img-url']} alt={character.name} className="character-image" />
             <h3>{character.name}</h3>
             <p>Price: {character.price}</p>
-            {/* Botón para agregar al carrito */}
+            {/* button add to the cart */}
             <button onClick={() => addToCart(character)}>Add to Cart</button>
           </div>
         ))

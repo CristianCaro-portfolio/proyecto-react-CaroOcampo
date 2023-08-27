@@ -8,7 +8,7 @@ import CartWidget from './context/CartWidget';
 import { getFirestore, collection, getDocs } from 'firebase/firestore'; // Import functions from Firestore
 import { initializeApp } from 'firebase/app';
 import './app.css';
-import { CartProvider } from './context/CartContext'; // Importa el CartProvider
+import { CartProvider } from './context/CartContext'; // Import CartProvider
 import config from './../config';
 
 const firebaseConfig = {
@@ -26,10 +26,10 @@ initializeApp(firebaseConfig);
 function App() {
   const [total, setTotal] = useState(0);
   const [characters, setCharacters] = useState([]);
-  const [cartItems, setCartItems] = useState([]); // Estado para los elementos en el carrito
+  const [cartItems, setCartItems] = useState([]); // status for elements in car
 
   useEffect(() => {
-    // Función para obtener datos desde Firestore
+    // obtain data from Firestore
     async function fetchCharactersFromFirestore() {
       try {
         const db = getFirestore();
